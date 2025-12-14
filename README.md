@@ -1,58 +1,54 @@
-# AI-Driven Math Performance Evaluation Pipeline
+# Math Adventures - Adaptive Learning Prototype
 
-## 1. Local Setup Instructions
-To run this evaluation pipeline locally:
+**A minimal, AI-powered math learning application that adapts difficulty in real-time based on user performance.**
+
+---
+
+## 📌 Project Overview
+[cite_start]This prototype demonstrates how AI can personalize learning for children (ages 5-10)[cite: 9]. [cite_start]It uses a rule-based adaptive engine to keep learners in their "optimal challenge zone" by dynamically adjusting math puzzles between **Easy**, **Medium**, and **Hard** levels[cite: 7, 31].
+
+### Key Features
+* [cite_start]**Dynamic Difficulty:** Automatically promotes or demotes users based on accuracy streaks[cite: 32].
+* [cite_start]**Performance Tracking:** Logs response times and correctness for every attempt[cite: 12].
+* [cite_start]**Session Summary:** Visual report of accuracy and speed at the end of the session[cite: 14].
+
+---
+
+## 🛠️ Local Setup Instructions
 
 1.  **Clone the repository:**
     ```bash
-    git clone https://github.com/vinitsonawane45/math-adventures
+    git clone [https://github.com/vinitsonawane45/math-adventures.git](https://github.com/vinitsonawane45/math-adventures.git)
     cd math-adventures
     ```
+
 2.  **Install dependencies:**
     ```bash
     pip install -r requirements.txt
     ```
+
 3.  **Run the application:**
+    *(Note: The source code is located in the `src` directory)*
     ```bash
-    streamlit run main.py
+    streamlit run src/main.py
     ```
-4.  **Access the Interface:**
+
+4.  **Access the App:**
     Open your browser to `http://localhost:8501`.
 
 ---
 
-## 2. Architecture of the Evaluation Pipeline
+## 📂 Repository Structure
+[cite_start]This project follows a modular architecture as requested[cite: 34, 47]:
 
-The solution implements a modular **Real-Time Human-in-the-Loop Evaluation Architecture**. It consists of three distinct layers:
-
-* **Interaction Layer (`main.py`):** Handles real-time user input and visual feedback. It captures the raw "conversation" (Math Problem ↔ User Answer).
-* **Decision Layer (`adaptive_engine.py`):** An algorithmic engine that evaluates user performance against historical windows. It acts as the "Judge," dynamically adjusting the difficulty based on accuracy and latency metrics.
-* **Analytics Layer (`performance_tracker.py`):** A data pipeline that logs every interaction (timestamp, latency, correctness) and computes rolling averages and mastery heatmaps for post-session analysis.
-
----
-
-## 3. Design Decisions (Why this way?)
-
-I chose a **State-Based Modular Architecture** over a monolithic script or a pure LLM approach for several reasons:
-
-1.  **Deterministic Evaluation:** Unlike LLM-based judges which can hallucinate grades, the `PerformanceTracker` uses rigid logic for mathematical verification. This ensures 100% evaluation accuracy.
-2.  **Latency Optimization:** By decoupling the *Generator* (`puzzle_generator.py`) from the *Evaluator* (`adaptive_engine.py`), the system can generate the next token/problem in sub-millisecond time.
-3.  **Adaptive Feedback Loops:** The architecture is designed specifically for "Assessment for Learning." It doesn't just score; it adapts. This required a stateful engine that persists across the session.
-
----
-
-## 4. Scaling, Latency, and Cost Optimization
-
-If this script were run at a scale of **millions of daily conversations**, the following strategies ensure viability:
-
-### A. Cost Minimization
-* **Algorithmic Generation vs. LLM:** This solution uses procedural generation (`puzzle_generator.py`) rather than querying an LLM API (like GPT-4) for every math problem.
-    * *LLM Cost:* ~$10/million tokens.
-    * *Our Cost:* **$0.**
-    * *Result:* The pipeline remains cost-effective even at massive scale because it relies on CPU logic rather than GPU inference.
-
-### B. Latency Management
-* **O(1) Evaluation:** The grading logic in `performance_tracker.py` is constant time. It does not require network calls or vector database lookups.
-* **Stateless Scaling Plan:** Currently, the app uses in-memory `session_state`. To scale to millions, we would replace the in-memory tracker with a **Redis Cache**.
-    * *Write Path:* User answers are pushed to a Redis Queue (async) so the UI never blocks.
-    * *Read Path:* The `AdaptiveEngine` reads difficulty state from Redis (sub-millisecond access).
+```text
+math-adventures/
+│
+├── README.md               # Project documentation
+├── requirements.txt        # Dependencies (streamlit, pandas, etc.)
+├── technical_note.md       # Architecture & Logic explanation (Deliverable #2)
+└── src/
+    ├── main.py             # User Interface (Streamlit)
+    ├── adaptive_engine.py  # Logic for difficulty adjustments
+    ├── puzzle_generator.py # Procedural math problem generator
+    └── performance_tracker.py # Data logging system
